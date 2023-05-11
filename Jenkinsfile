@@ -5,7 +5,7 @@ pipeline{
     environment{
 
         DOCKERHUB_USERNAME = "perarasan"
-        APP_NAME = "Gitops"
+        APP_NAME = "gitops"
         IMAGE_TAG = "${BUILD_NUMBER}"
         IMAGE_NAME = "${DOCKERHUB_USERNAME}" + "/" + "${APP_NAME}"
         REGISTRY_CREDS = 'docker'
@@ -42,7 +42,7 @@ pipeline{
                 }
             }
         }
-         stage('Docker Image push'){
+        stage('Docker Image push'){
 
             steps{
                 script{
@@ -54,7 +54,34 @@ pipeline{
                 }
             }
         }
+        stage('Docker Remove Image'){
+
+            steps{
+                script{
+
+                    sh "docker rmi ${IMAGE_NAME}:${IMAGE_TAG}"
+                    sh "docker rmi ${IMAGE_NAME}:latest"
+
+                    }
+                }
+            }
+        stage('Updating K8s deployment file'){
+
+            steps{
+                script{
+
+                    sh """
+                    cat deployment.yml
+                    sed -i 's/${APP_NAME}.*/${APP_NAME}:${IMAGE_TAG}/g' deployment.yml
+                    cat deployment.yml
+ 
+                    """
+
+                    }
+                }
+            }
+        }
     }
-}
+
 
 
