@@ -80,8 +80,23 @@ pipeline{
                     }
                 }
             }
+        stage('Push the changed deployment file to Git'){
+
+            steps{
+                script{
+
+                    sh """
+                    git config --global user.name "perarasanvijay12"
+                    git config --global user.email "perarasanvijay5000@gmail.com"   
+                    git add deployment.yml
+                    git commit -m "updated deployment file"
+                    git remote set-url origin https://{perarasanvijay12}:{Perarasanvijay@123}@github.com/{username}/project.git 
+                    """
+
+                    }
+            }
         }
     }
 
-
+}
 
